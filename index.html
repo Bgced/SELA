@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SELA — Ambil Jeda, Ngopi Dulu</title>
+  <meta name="description" content="SELA Coffee — ruang jeda untuk mahasiswa & pekerja remote. Buka 24 jam di Sleman, Yogyakarta.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- COFFEE BEANS PARTICLES (CSS-only, no JS) -->
+  <div class="beans-container" aria-hidden="true">
+    <div class="bean"></div><div class="bean"></div><div class="bean"></div>
+    <div class="bean"></div><div class="bean"></div><div class="bean"></div>
+    <div class="bean"></div><div class="bean"></div><div class="bean"></div>
+    <div class="bean"></div><div class="bean"></div><div class="bean"></div>
+  </div>
+
+  <!-- LIVE CLOCK + RAMAI INDICATOR -->
+  <div class="live-status" id="liveStatus">
+    <span class="status-dot" id="statusDot"></span>
+    <span class="status-text" id="statusText">Loading...</span>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- CONFETTI CANVAS -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="SELA">
+        <svg class="nav-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/>
+          <rect x="17.5" y="15" width="4.6" height="18" rx="2.3" fill="currentColor"/>
+          <rect x="25.9" y="15" width="4.6" height="18" rx="2.3" fill="currentColor"/>
+        </svg>
+        <span class="nav-word">SELA</span>
+      </a>
+      <div class="nav-actions">
+        <button class="nav-icon-btn" id="themeToggle" aria-label="Ganti tema">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2M12 20.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M1.5 12h2M20.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>
+        </button>
+        <button class="nav-icon-btn lang-btn" id="langToggle" aria-label="Ganti bahasa"><span id="langLabel">ID</span></button>
+        <button class="nav-icon-btn" id="gridToggle" aria-label="Tampilan menu" title="Tampilan menu">
+          <svg class="icon-grid" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>
+          <svg class="icon-list" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+        <button class="nav-icon-btn" id="priceToggle" aria-label="Toggle harga" title="Tampilkan/sembunyikan harga">
+          <svg class="icon-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3.5"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+        <button class="nav-icon-btn" id="fontToggle" aria-label="Ukuran font" title="Ukuran font">
+          <span class="font-size-label" id="fontLabel">A</span>
+        </button>
+        <button class="nav-icon-btn hamburger" id="hamburger" aria-label="Menu"><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FULLSCREEN MENU -->
+  <div class="fullscreen-menu" id="fullscreenMenu">
+    <nav class="fs-nav">
+      <a href="#menu" class="fs-link">Menu</a>
+      <a href="#ruang" class="fs-link">Ruangan</a>
+      <a href="#testi" class="fs-link">Testimoni</a>
+      <a href="#lokasi" class="fs-link">Lokasi</a>
+    </nav>
+    <div class="fs-foot">Buka 24 Jam &nbsp;·&nbsp; 0897-2007-113</div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero" id="hero">
+    <div class="hero-slides">
+      <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920&q=80')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1920&q=80')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1920&q=80')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80')"></div>
+    </div>
+    <div class="hero-grad"></div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow" data-i18="hero_eyebrow">Buka 24 jam · Sleman, Yogyakarta</p>
+      <h1 class="hero-title">
+        <span class="ht-line" data-i18="hero_t1">Setiap hari butuh</span>
+        <span class="ht-line ht-serif" data-i18="hero_t2">tempat untuk berhenti sejenak.</span>
+      </h1>
+      <p class="hero-sub" data-i18="hero_sub">Sebuah ruang hangat di Sleman untuk bekerja, belajar, dan berhenti sejenak dari hiruk-pikuk — dengan kopi yang dibuat dengan sepenuh hati.</p>
+      <div class="hero-cta">
+        <a href="#menu" class="btn-solid" data-i18="cta_menu">Lihat Menu</a>
+        <a href="#lokasi" class="btn-ghost" data-i18="cta_lokasi">Kunjungi Kami</a>
+      </div>
+      <div class="hero-special reveal" id="heroSpecial">
+        <span class="special-badge" data-i18="special_tag">Spesial Hari Ini</span>
+        <span class="special-name" id="specialName"></span>
+        <span class="special-price" id="specialPrice"></span>
+        <button class="special-btn" id="specialBtn" data-i18="special_btn">Ambil</button>
+      </div>
+    </div>
+      <a href="#menu" class="hero-scroll" aria-label="Gulir ke bawah">
+      <span class="hs-line"></span>
+    </a>
+  </header>
+
+  <!-- MENU -->
+  <section class="menu section-tint" id="menu">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-tag" data-i18="menu_tag">Menu</span>
+        <h2 class="sec-title"><span data-i18="menu_t1">Pilih</span> <em data-i18="menu_t2">favorit Anda</em></h2>
+      </div>
+      <div class="menu-filter reveal" id="menuFilter">
+        <button class="mcat active" data-cat="semua" data-i18="f_semua">Semua</button>
+        <button class="mcat" data-cat="minuman" data-i18="f_minuman">Minuman</button>
+        <button class="mcat" data-cat="makanan" data-i18="f_makanan">Makanan</button>
+        <button class="mcat" data-cat="cemilan" data-i18="f_cemilan">Cemilan</button>
+        <button class="mcat" data-cat="paket" data-i18="f_paket">Paket</button>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
+  </section>
+
+  <!-- PARALLAX BANNER 1 -->
+  <div class="p-banner" id="pBanner1">
+    <div class="p-banner-bg" style="background-image:url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920&q=80')"></div>
+    <div class="p-banner-shade"></div>
+    <div class="p-banner-inner reveal">
+      <p class="p-quote" data-i18="p1_quote">“Kopi terbaik lahir dari biji pilihan, diseduh perlahan — seperti waktu yang layak kamu ambil jeda.”</p>
+      <span class="p-sub" data-i18="p1_sub">Diseduh fresh setiap hari · Biji dari petani lokal</span>
+    </div>
+  </div>
+
+  <!-- RUANGAN -->
+  <section class="ruang" id="ruang">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-tag" data-i18="ruang_tag">Ruangan &amp; Fasilitas</span>
+        <h2 class="sec-title"><span data-i18="ruang_t1">Tiga zona,</span> <em data-i18="ruang_t2">satu tempat</em></h2>
+      </div>
+      <div class="ruang-grid">
+        <article class="r-card reveal">
+          <div class="r-num">01</div>
+          <h3 data-i18="r1_t">Zona Nugas</h3>
+          <p data-i18="r1_d">Meja panjang, lampu meja individual, suasana hening. Tempat yang tepat untuk menyelesaikan pekerjaan hingga pagi.</p>
+          <div class="r-tags"><span>24 Jam</span><span>Lampu Meja</span><span>Hening</span></div>
+        </article>
+        <article class="r-card reveal">
+          <div class="r-num">02</div>
+          <h3 data-i18="r2_t">Ruang Diskusi</h3>
+          <p data-i18="r2_d">Dirancang untuk kelompok — dilengkapi papan tulis dan layar untuk presentasi hingga sepuluh orang.</p>
+          <div class="r-tags"><span>Whiteboard</span><span>8–10 Orang</span><span>Dapat Dibooking</span></div>
+        </article>
+        <article class="r-card reveal">
+          <div class="r-num">03</div>
+          <h3 data-i18="r3_t">Pojok Mantan</h3>
+          <p data-i18="r3_d">Sudut paling tenang dengan pencahayaan lembut dan playlist yang menenangkan. Untuk waktu bersama diri sendiri.</p>
+          <div class="r-tags"><span>Cahaya Redup</span><span>Playlist Tenang</span><span>WiFi Tercepat</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONI -->
+  <section class="testi section-tint" id="testi">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-tag" data-i18="testi_tag">Testimoni</span>
+        <h2 class="sec-title"><span data-i18="testi_t1">Kata</span> <em data-i18="testi_t2">mereka</em></h2>
+      </div>
+      <div class="testi-grid">
+        <figure class="t-card reveal">
+          <div class="t-stars" aria-hidden="true">★★★★★</div>
+          <blockquote data-i18="t1">“Semester yang berat ini saya selamat karena SELA. Kopi delapan ribuan, WiFi stabil, deadline tidak lagi terasa menakutkan.”</blockquote>
+          <figcaption class="t-user"><b>R</b><div><strong>Raka</strong><span data-i18="t1_r">Mahasiswa Teknik</span></div></figcaption>
+        </figure>
+        <figure class="t-card reveal">
+          <div class="t-stars" aria-hidden="true">★★★★★</div>
+          <blockquote data-i18="t2">“Setelah minggu yang berat, saya menulis tiga ribu kata di Pojok Mantan. Hati kembali tenang, skripsi selesai. Sangat direkomendasikan.”</blockquote>
+          <figcaption class="t-user"><b>D</b><div><strong>Dinda</strong><span data-i18="t2_r">Mahasiswa Sastra</span></div></figcaption>
+        </figure>
+        <figure class="t-card reveal">
+          <div class="t-stars" aria-hidden="true">★★★★★</div>
+          <blockquote data-i18="t3">“Sangat cocok untuk pekerja remote. Tempat paling nyaman untuk meeting online — dan kopinya tidak kalah dari kedai lain.”</blockquote>
+          <figcaption class="t-user"><b>A</b><div><strong>Arif</strong><span data-i18="t3_r">Product Designer</span></div></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARALLAX BANNER 2 -->
+  <div class="p-banner p-banner-alt" id="pBanner2">
+    <div class="p-banner-bg" style="background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1920&q=80')"></div>
+    <div class="p-banner-shade"></div>
+    <div class="p-banner-inner reveal">
+      <p class="p-quote" data-i18="p2_quote">“Buka 24 jam. Karena deadline nggak peduli jam berapa.”</p>
+      <span class="p-sub" data-i18="p2_sub">Malam sampai subuh, SELA selalu terang</span>
+    </div>
+  </div>
+
+  <!-- LOKASI -->
+  <section class="lokasi" id="lokasi">
+    <div class="wrap lokasi-grid">
+      <div class="lokasi-info reveal">
+        <span class="sec-tag" data-i18="lokasi_tag">Lokasi &amp; Kontak</span>
+        <h2 class="sec-title"><span data-i18="lokasi_t1">Silakan</span> <em data-i18="lokasi_t2">mampir</em></h2>
+        <p class="lokasi-alamat">Jl. Colombo No. 1, Karangmalang,<br>Sleman, Yogyakarta 55281</p>
+        <div class="kontak-list">
+          <a href="https://wa.me/628972007113" target="_blank" rel="noopener" class="k-row"><span data-i18="k_wa">WhatsApp / Telepon</span><strong>0897-2007-113</strong></a>
+          <a href="https://instagram.com/cekaaell" target="_blank" rel="noopener" class="k-row"><span>Instagram Founder</span><strong>@cekaaell</strong></a>
+          <div class="k-row"><span data-i18="k_jam">Jam Buka</span><strong data-i18="k_jam_v">24 Jam, Setiap Hari</strong></div>
+          <div class="k-row"><span>WiFi</span><strong>SELA-WIFI</strong></div>
+        </div>
+        <a href="https://maps.google.com/?q=Jl.+Colombo+1+Karangmalang+Sleman+Yogyakarta" target="_blank" rel="noopener" class="btn-solid" data-i18="k_maps">Buka di Google Maps</a>
+      </div>
+      <div class="lokasi-map reveal">
+        <iframe src="https://www.google.com/maps?q=Jl.+Colombo+1+Karangmalang+Sleman+Yogyakarta&output=embed" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Peta lokasi SELA"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER CTA -->
+  <section class="order" id="order">
+    <div class="order-content reveal">
+      <span class="sec-tag sec-tag-light" data-i18="order_tag">Pesan Sekarang</span>
+      <h2 class="order-title"><span data-i18="order_t1">Lapar kopi?</span> <em>SELA</em><span data-i18="order_t3"> saja.</span></h2>
+      <p class="order-sub" data-i18="order_sub">Pilih menu favorit Anda — pembayaran melalui QRIS, e-wallet, atau langsung di kasir.</p>
+      <a href="#menu" class="btn-solid btn-light" data-i18="order_cta">Lihat Menu</a>
+    </div>
+  </section>
+
+  <!-- SARAN & KRITIK -->
+  <section class="feedback" id="feedback">
+    <div class="wrap feedback-grid">
+      <div class="feedback-left reveal">
+        <span class="sec-tag" data-i18="fb_tag">Saran &amp; Kritik</span>
+        <h2 class="sec-title"><span data-i18="fb_t1">Bantu kami</span> <em data-i18="fb_t2">menjadi lebih baik</em></h2>
+        <p class="fb-desc" data-i18="fb_desc">Kami sangat menghargai setiap masukan dari pelanggan. Silakan sampaikan saran, kritik, atau ide kolaborasi Anda langsung kepada kami — setiap masukan sangat berarti bagi pengembangan SELA.</p>
+        <a href="https://wa.me/628972007113?text=Halo%20SELA%2C%20saya%20ingin%20menyampaikan%20saran%20dan%20kritik%3A" target="_blank" rel="noopener" class="btn-solid">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>
+          <span data-i18="fb_btn">Kirim Masukan</span>
+        </a>
+      </div>
+      <div class="feedback-right reveal">
+        <div class="fb-card">
+          <h3 data-i18="fb1_t">Kritik &amp; Saran</h3>
+          <p data-i18="fb1_d">Masukan Anda membantu kami meningkatkan kualitas layanan secara berkelanjutan.</p>
+        </div>
+        <div class="fb-card">
+          <h3 data-i18="fb2_t">Lapor Masalah</h3>
+          <p data-i18="fb2_d">Menemukan kendala selama berkunjung? Kami akan menanganinya dengan segera.</p>
+        </div>
+        <div class="fb-card">
+          <h3 data-i18="fb3_t">Kolaborasi</h3>
+          <p data-i18="fb3_d">Tertarik berdiskusi atau bekerja sama? Kami terbuka untuk peluang kolaborasi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="f-logo">SELA</div>
+        <p class="f-tag" data-i18="f_tag">Ruang jeda untuk menyelesaikan pekerjaan,<br>melepas lelah, dan menikmati kopi.</p>
+      </div>
+      <div>
+        <h4 data-i18="f_nav">Jelajah</h4>
+        <a href="#menu">Menu</a>
+        <a href="#ruang">Ruangan</a>
+        <a href="#testi">Testimoni</a>
+        <a href="#" id="aboutLink">Tentang Kami</a>
+      </div>
+      <div>
+        <h4 data-i18="f_sos">Sosial</h4>
+        <a href="https://instagram.com/cekaaell" target="_blank" rel="noopener">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">X / Twitter</a>
+      </div>
+      <div>
+        <h4 data-i18="f_kontak">Kontak</h4>
+        <a href="https://wa.me/628972007113" target="_blank" rel="noopener">0897-2007-113</a>
+        <a href="#">Jl. Colombo No. 1, Sleman</a>
+        <a href="#">Buka 24 Jam</a>
+      </div>
+    </div>
+    <div class="f-bottom">© 2026 SELA Coffee</div>
+  </footer>
+
+  <!-- ORDER LANGSUNG (ganti keranjang) -->
+  <div class="pay-overlay" id="orderOverlay">
+    <div class="pay-modal order-item-modal">
+      <div class="order-hero">
+        <img id="ordImg" src="" alt="" class="order-hero-img" loading="lazy">
+        <div class="order-hero-shade"></div>
+        <button class="x-btn order-close" onclick="closeOrder()" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <span class="order-hero-tag" id="ordTag"></span>
+      </div>
+      <div class="order-body">
+        <div class="menu-category-label" id="ordCat"></div>
+        <h3 class="order-name" id="ordName"></h3>
+        <p class="order-desc" id="ordDesc"></p>
+        <div class="order-price-row">
+          <span class="menu-price" id="ordPrice"></span>
+          <div class="cart-item-qty order-qty">
+            <button class="qty-btn" onclick="ordQty(-1)" aria-label="Kurangi">−</button>
+            <span class="qty-num" id="ordQtyNum">1</span>
+            <button class="qty-btn" onclick="ordQty(1)" aria-label="Tambah">+</button>
+          </div>
+        </div>
+        <div class="promo-sec order-promo">
+          <div class="cf-title" data-i18="promo_t">Kode Promo</div>
+          <div class="promo-row">
+            <input type="text" id="promoInput" placeholder="Masukkan kode promo" style="text-transform:uppercase">
+            <button id="promoApply" data-i18="promo_btn">Pakai</button>
+          </div>
+          <p class="promo-msg" id="promoMsg"></p>
+        </div>
+      </div>
+      <div class="cart-bottom">
+        <div class="cb-left">
+          <span class="cb-label" data-i18="cb_total">Total</span>
+          <strong class="cb-total" id="cartTotal">Rp 0</strong>
+        </div>
+        <button class="checkout-btn" id="checkoutBtn">
+          <span data-i18="cb_checkout">Checkout</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PEMBAYARAN -->
+  <div class="pay-overlay" id="payOverlay">
+    <div class="pay-modal">
+      <div class="pay-step" id="payStep1">
+        <div class="pay-head">
+          <h3 data-i18="pay_t">Metode Pembayaran</h3>
+          <button class="x-btn" onclick="closePay()" aria-label="Tutup">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="pay-banner"><span data-i18="pay_total">Total Tagihan</span><strong id="payTotal">Rp 0</strong></div>
+        <div class="buyer-form" id="buyerForm">
+          <div class="cf-title" data-i18="cf_t">Data Pemesan</div>
+          <div class="cf-row">
+            <div><label for="buyerName" data-i18="cf_nama">Nama</label><input type="text" id="buyerName" placeholder="Nama lengkap" autocomplete="name"></div>
+            <div><label for="buyerWa">WhatsApp</label><input type="tel" id="buyerWa" placeholder="08xxxxxxxxxx" autocomplete="tel"></div>
+          </div>
+        </div>
+        <div class="pay-methods" id="payMethods"></div>
+      </div>
+      <div class="pay-step" id="payStep2" style="display:none">
+        <div class="pay-head">
+          <button class="pay-back" onclick="backToMethods()" data-i18="pay_back">← Kembali</button>
+          <h3 id="payMethodTitle"></h3>
+          <span style="width:64px"></span>
+        </div>
+        <div class="countdown-box">
+          <span data-i18="pay_cd">Selesaikan pembayaran dalam</span>
+          <div class="countdown" id="countdown">02:00</div>
+        </div>
+        <div class="pay-body" id="payBody"></div>
+        <button class="checkout-btn pay-confirm" onclick="confirmPayment()" data-i18="pay_confirm">Saya Sudah Bayar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVOICE -->
+  <div class="pay-overlay" id="invoiceOverlay">
+    <div class="pay-modal invoice-modal">
+      <div class="inv-success">
+        <div class="inv-check"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3 data-i18="inv_t">Pembayaran Berhasil</h3>
+        <p data-i18="inv_s">Invoice telah dikirim melalui WhatsApp &amp; email Anda</p>
+      </div>
+      <div class="inv-paper" id="invoicePaper"></div>
+      <div class="inv-actions">
+        <button class="ib ib-print" onclick="printInvoice()" data-i18="inv_print">Unduh</button>
+        <button class="ib ib-wa" onclick="sendInvoiceWA()" data-i18="inv_wa">WhatsApp</button>
+        <button class="ib ib-mail" onclick="sendInvoiceEmail()" data-i18="inv_mail">Email</button>
+        <button class="ib ib-done" onclick="finishOrder()" data-i18="inv_done">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOUNDER SECRET (easter egg: klik logo SELA 5x) -->
+  <div class="founder-overlay" id="founderOverlay">
+    <div class="founder-modal">
+      <button class="founder-modal-close" onclick="closeFounder()" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <img src="foto owner/IMG_3569.jpg" alt="Founder SELA" class="founder-modal-photo">
+      <div class="founder-modal-tag" data-i18="fsm_tag">Kamu menemukan rahasia kami</div>
+      <h3 class="founder-modal-name" data-i18="fsm_name">Di Balik SELA</h3>
+      <p class="founder-modal-bio" data-i18="fsm_bio">SELA lahir dari keresahan sederhana: sulitnya menemukan tempat menyelesaikan tugas dengan kopi terjangkau dan WiFi yang andal. Ruang ini dibangun untukmu yang sedang berjuang.</p>
+      <a href="https://instagram.com/cekaaell" target="_blank" rel="noopener" class="founder-modal-ig">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none"/></svg>
+        @cekaaell
+      </a>
+    </div>
+  </div>
+
+  <button class="back-top" id="backTop" aria-label="Kembali ke atas">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- STICKY MOBILE ORDER BAR -->
+  <div class="mobile-order-bar" id="mobileOrderBar">
+    <div class="mob-info">
+      <span class="mob-label" id="mobLabel">Mulai dari</span>
+      <strong class="mob-price" id="mobPrice">Rp 9.000</strong>
+    </div>
+    <button class="mob-cta" id="mobOrderBtn">
+      Pesan Sekarang
+      <svg class="btn-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <!-- ADMIN PANEL (akses: klik logo 10x cepat / ketik "selaadmin") -->
+  <div class="admin-overlay" id="adminOverlay">
+    <div class="admin-modal">
+      <div class="admin-login" id="adminLogin">
+        <div class="admin-lock">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+        </div>
+        <h3>Admin SELA</h3>
+        <p class="admin-login-sub">Masukkan password untuk melihat data pengunjung</p>
+        <input type="password" id="adminPass" placeholder="Password admin" autocomplete="off">
+        <button class="admin-login-btn" id="adminLoginBtn">Masuk</button>
+        <p class="admin-err" id="adminErr"></p>
+      </div>
+      <div class="admin-dash" id="adminDash" style="display:none">
+        <button class="x-btn admin-close" onclick="closeAdmin()" aria-label="Tutup">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <h3 class="admin-title">Dashboard Pengunjung</h3>
+        <div class="admin-stats">
+          <div class="ad-stat"><strong id="statVisits">0</strong><span>Total Kunjungan</span></div>
+          <div class="ad-stat"><strong id="statUnique">0</strong><span>Pengunjung Unik</span></div>
+          <div class="ad-stat"><strong id="statOrders">0</strong><span>Total Pesanan</span></div>
+          <div class="ad-stat"><strong id="statRevenue">Rp 0</strong><span>Omzet (perangkat ini)</span></div>
+        </div>
+        <div class="admin-section">
+          <h4>Riwayat Kunjungan</h4>
+          <div class="admin-list" id="visitList"></div>
+        </div>
+        <div class="admin-section">
+          <h4>Riwayat Pesanan</h4>
+          <div class="admin-list" id="orderList"></div>
+        </div>
+        <button class="admin-clear" id="adminClearBtn">Hapus Semua Data Log</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
