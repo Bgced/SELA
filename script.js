@@ -669,11 +669,13 @@ document.querySelector('.nav-logo')?.addEventListener('click', e => {
   logoClicks++;
   clearTimeout(logoTimer);
   logoTimer = setTimeout(() => logoClicks = 0, 1600);
-  if (logoClicks >= 5) {
+  if (logoClicks >= 10) {
+    // 10x = admin panel (cara buka di HP, karena Ctrl+Shift+A nggak ada di touchscreen)
+    // (modal founder tetap bisa dibuka lewat link "Tentang Kami" di footer)
     logoClicks = 0;
     clearTimeout(logoTimer);
     e.preventDefault();
-    openFounder();
+    openAdmin();
   }
 });
 document.getElementById('founderOverlay')?.addEventListener('click', e => {

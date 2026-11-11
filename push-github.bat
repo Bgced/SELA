@@ -8,7 +8,7 @@ git add .
 
 echo.
 echo ===== 2. COMMIT =====
-git commit -m "Fix cart overlay bug, validasi nama, modernkan tombol promo"
+git commit -m "Tambah favicon SVG logo SELA, tambah cara buka admin via tap logo 10x (mobile)"
 
 echo.
 echo ===== 3. PUSH KE GITHUB =====
