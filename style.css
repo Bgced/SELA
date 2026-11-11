@@ -33,7 +33,6 @@ body {
   line-height: 1.65;
   overflow-x: hidden;
   transition: background .4s, color .4s;
-  contain: layout style paint; /* limit browser repaint scope */
 }
 img { max-width: 100%; display: block; }
 button { font-family: inherit; }
@@ -812,6 +811,18 @@ a.k-row:hover { background: var(--cream); }
 .promo-row { display: flex; gap: 8px; margin-bottom: 6px; }
 .promo-row input { flex: 1; padding: 10px 14px; border: 1.5px dashed var(--sand); border-radius: 8px; font-family: monospace; font-size: .85rem; font-weight: 600; letter-spacing: 2px; outline: none; background: var(--cream); color: var(--accent); transition: all .2s; text-transform: uppercase; }
 .promo-row input:focus { border-style: solid; border-color: var(--accent); background: var(--paper); }
+.promo-row button {
+  padding: 10px 22px; border: none; border-radius: 10px;
+  background: var(--espresso); color: var(--cream-soft);
+  font-family: inherit; font-size: .82rem; font-weight: 600;
+  letter-spacing: .04em; cursor: pointer; flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all .3s var(--ease);
+}
+.promo-row button:hover { background: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(156,107,63,.35); }
+.promo-row button:active { transform: translateY(0) scale(.96); }
+body.dark .promo-row button { background: var(--accent); color: #1C1510; }
+body.dark .promo-row button:hover { background: var(--sand); }
 .promo-msg { font-size: .75rem; font-weight: 600; min-height: 1em; }
 .promo-msg.ok { color: var(--success); }
 .promo-msg.err { color: var(--accent); }
@@ -830,7 +841,7 @@ a.k-row:hover { background: var(--cream); }
 .green { color: var(--success); font-weight: 600; }
 
 /* ===== PEMBAYARAN ===== */
-.pay-overlay { position: fixed; inset: 0; background: rgba(42,30,23,.65); backdrop-filter: blur(6px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; padding: 20px; }
+.pay-overlay { position: fixed; inset: 0; background: rgba(42,30,23,.65); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s; padding: 20px; }
 .pay-overlay.show { opacity: 1; pointer-events: all; }
 .pay-modal { background: var(--paper); border-radius: 20px; width: 440px; max-width: 100%; max-height: 92vh; overflow-y: auto; transform: scale(.93) translateY(20px); transition: transform .4s var(--ease); box-shadow: var(--shadow-lg); }
 .pay-overlay.show .pay-modal { transform: scale(1) translateY(0); }

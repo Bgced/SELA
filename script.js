@@ -116,20 +116,29 @@ function filterMenu(cat, btn) {
   renderMenu();
 }
 
-// Event delegation untuk menu grid (handle semua klik di menu)
+// Event delegation untuk menu grid — buka order modal (SATU handler aja)
 document.getElementById('menuGrid')?.addEventListener('click', e => {
   const btn = e.target.closest('.menu-order-btn');
   if (btn) {
     const id = parseInt(btn.dataset.id);
-    if (id) addToCart(id, btn);
+    if (id) openOrder(id);
   }
 });
 
-// Event delegation untuk filter buttons
-document.getElementById('menuFilter')?.addEventListener('click', e => {
-  const btn = e.target.closest('.mcat');
-  if (btn) filterMenu(btn.dataset.cat, btn);
-});
+// ===== ADD TO CART (simplified — langsung buka modal order) =====
+function addToCart(id, btn) {
+  openOrder(id);
+  if (btn) {
+    btn.classList.add('added');
+    setTimeout(() => btn.classList.remove('added'), 600);
+  }
+}
+
+// ===== RENDER CART (untuk future use / cart modal) =====
+function renderCart() {
+  // Placeholder — keranjang sudah digantikan oleh order modal
+  // Ini bisa di-extend kalau mau bikin cart modal terpisah
+}
 
 // ===== ORDER ITEM MODAL (ganti keranjang) =====
 let currentOrderItem = null;
@@ -179,18 +188,13 @@ function updateOrdTotal() {
   el('cartTotal').textContent = rp(total);
 }
 
+// Tutup order modal kalau klik overlay
 el('orderOverlay')?.addEventListener('click', e => {
   if (e.target === el('orderOverlay')) closeOrder();
 });
 
-// Event delegation untuk menu grid — buka order modal
-document.getElementById('menuGrid')?.addEventListener('click', e => {
-  const btn = e.target.closest('.menu-order-btn');
-  if (btn) {
-    const id = parseInt(btn.dataset.id);
-    if (id) openOrder(id);
-  }
-});
+// Checkout button
+document.getElementById('checkoutBtn')?.addEventListener('click', openPayment);
 
 // ===== PROMO (order modal) =====
 document.getElementById('promoApply')?.addEventListener('click', () => {
@@ -213,10 +217,6 @@ document.getElementById('promoInput')?.addEventListener('keydown', e => { if (e.
 // ===== PEMBAYARAN =====
 function openPayment() {
   if (!currentOrderItem) { alert('Silakan pilih menu terlebih dahulu.'); return; }
-  const nama = el('buyerName')?.value.trim();
-  const wa = el('buyerWa')?.value.trim();
-  if (!nama) { alert('Silakan masukkan nama pemesan terlebih dahulu.'); el('buyerName')?.focus(); return; }
-  if (!wa) { alert('Silakan masukkan nomor WhatsApp Anda terlebih dahulu.'); el('buyerWa')?.focus(); return; }
 
   el('orderOverlay')?.classList.remove('show');
   el('payOverlay').classList.add('show');
@@ -259,6 +259,11 @@ function renderPayMethods() {
 }
 
 function selectPayMethod(method) {
+  const nama = el('buyerName')?.value.trim();
+  const wa = el('buyerWa')?.value.trim();
+  if (!nama) { alert('Silakan masukkan nama pemesan.'); el('buyerName')?.focus(); return; }
+  if (!wa) { alert('Silakan masukkan nomor WhatsApp Anda.'); el('buyerWa')?.focus(); return; }
+
   currentMethod = method;
   el('payStep1').style.display = 'none';
   el('payStep2').style.display = '';
